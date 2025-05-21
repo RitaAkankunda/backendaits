@@ -2,6 +2,7 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 from decouple import config
+import dj_database_url
 
 load_dotenv()
 
@@ -62,15 +63,9 @@ TEMPLATES = [
 WSGI_APPLICATION = "SDP.wsgi.application"
 
 # Database configuration
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DB_NAME', 'GroupC'),
-        'USER': os.environ.get('DB_USER', 'myuser'),
-        'PASSWORD': os.environ.get('DB_PASSWORD', '2003'),
-        'HOST': os.environ.get('DB_HOST', 'localhost'),
-        'PORT': os.environ.get('DB_PORT', '5432'),
-    }
+    'default': dj_database_url.parse(os.environ.get('DATABASE_URL'), conn_max_age=600),
 }
 
 AUTH_PASSWORD_VALIDATORS = [
