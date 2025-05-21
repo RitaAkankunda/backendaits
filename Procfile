@@ -1,0 +1,1 @@
+web: gunicorn SDP.wsgi --log-file -
