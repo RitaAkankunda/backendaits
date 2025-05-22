@@ -1,25 +1,24 @@
 from pathlib import Path
 import os
 from dotenv import load_dotenv
-from decouple import config
 import dj_database_url
 
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = config('SECRET_KEY')
-DEBUG = config('DEBUG', default=False, cast=bool)
-
-ALLOWED_HOSTS = ['*']  
+SECRET_KEY = os.environ.get("SECRET_KEY")
+DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
+ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
+    'whitenoise.runserver_nostatic',  # top of list
+    "django.contrib.staticfiles",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
-    "django.contrib.staticfiles",
     "SDPapp",
     "rest_framework",
     "accounts",
@@ -28,19 +27,21 @@ INSTALLED_APPS = [
     "notifications",
     "django_filters",
     'model_utils',
+
 ]
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
 
 ROOT_URLCONF = "SDP.urls"
 
@@ -62,11 +63,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "SDP.wsgi.application"
 
-# Database configuration
 
+# Database configuration
 DATABASES = {
-    'default': dj_database_url.parse(os.environ.get('DATABASE_URL'), conn_max_age=600),
+    'default': dj_database_url.config(conn_max_age=600, ssl_require=True)
 }
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
@@ -80,9 +82,9 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
 
+STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATIC_URL = "/static/"
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 
 # Media files configuration for file uploads
 MEDIA_URL = '/media/'
@@ -97,17 +99,22 @@ REST_FRAMEWORK = {
         'accounts.authentication.CustomTokenAuthentication',
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
+        
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
+
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend',
+
     ],
 }
 
 CORS_ALLOW_CREDENTIALS = True
+# CORS_ALLOWED_ORIGINS = ["http://localhost:5173"]
 CORS_ALLOW_ALL_ORIGINS = True  # TEMPORARY for debugging!
+
 CORS_ALLOW_HEADERS = ["*"]
 CORS_ALLOW_METHODS = [
     "GET",
@@ -117,6 +124,7 @@ CORS_ALLOW_METHODS = [
     "DELETE",
     "OPTIONS"
 ]
+
 
 AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend']
 

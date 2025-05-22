@@ -1,1 +1,1 @@
-web: gunicorn SDP.wsgi --log-file -
+web: gunicorn SDP.wsgi

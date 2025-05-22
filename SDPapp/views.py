@@ -130,11 +130,4 @@ class LecturerResolveIssueView(APIView):
             message=f"Your issue '{issue.title}' has been resolved by {request.user.email}"
         )
         return Response({"detail": "Issue resolved successfully."}, status=200)
-
-# Root API View
-class RootView(APIView):
-    permission_classes = [permissions.AllowAny]
-
-    def get(self, request):
-        return Response({"message": "Welcome to the SDP backend API"})
     
